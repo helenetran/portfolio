@@ -1,33 +1,30 @@
-<template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
-  </div>
+<template lang="pug">
+section#home(:class="{ 'no-scroll': !animationDone }")
+  .home
+    .home__name-wrapper.home__name-wrapper--animated
+      .home__name.home__name--full(v-if="animationDone") HELENE TRAN
+      .home__name.home__name--animated(v-else)
+        - var $text = "HELENE TRAN"
+        - for (i = 0; i < 50; i++)
+          .text #{$text}
+
+    .home__text
+      .home__text--job FRONTEND DEVELOPER
+      .home__text--location @Montpellier, France
+    .home__background(v-if="!animationDone")
+
+    v-fade-transition
+      input.home__skip-button(
+        v-if="!animationDone"
+        type="button"
+        value="Skip"
+        @click="skipAnimation()")
+
+  rain(v-if="animationDone")
+  .home__description
+    div.home__description-clipper
+      div.home__description--text I build user friendly experience and elegant websites.
+      div As a developer, I can also turn coffee into code :)
 </template>
 
 <script>
@@ -39,20 +36,219 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-  margin: 40px 0 0;
+<style lang="scss">
+#home {height: auto;}
+
+.home {
+  height: 100vh;
+  position: relative;
+
+  &__name-wrapper {
+    width: 100%;
+    position: absolute;
+    top: 51vh;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 7vw;
+    color: #f8bc9b;
+    line-height: 7vw;
+    letter-spacing: 0.5em;
+    font-family: Abyssopelagic, Arial, Helvetica, sans-serif;
+  }
+
+  &__name {
+    z-index: 1;
+    mix-blend-mode: difference;
+    line-height: 0vh;
+
+    &--full {
+      text-indent: 0.5em;
+    }
+  }
+
+  &__skip-button {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 4em;
+    padding: 4px 10px 4px 10px;
+    font-size: 1em;
+    line-height: 1em;
+    font-family: Roboto, Arial, Helvetica, sans-serif;
+    color: #bdbdbd;
+    border: 1px solid #bdbdbd;
+    background-color: transparent;
+    outline: none;
+    transition: 0.3s ease-in-out;
+    z-index: 20;
+
+    &:hover {
+      cursor: pointer;
+      opacity: 1;
+      color: #000;
+      border-color: #000;
+    }
+  }
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+// ============================================================= //
+
+// ============== Animation text Helene Andre ================== //
+.home__name-wrapper--animated {
+  .text {
+    position: absolute;
+    font-size: 7vw;
+    color: #fff;
+    mix-blend-mode: screen;
+    line-height: 7vw;
+    letter-spacing: 0.5em;
+    padding-left: 0.5em;
+    opacity: 0;
+    font-family: Abyssopelagic, Arial, Helvetica, sans-serif;
+    transform: translate(-50%, -50%);
+    // width: fit-content;
+    z-index: 10;
+
+    @for $i from 0 through 50 {
+      $key: $i + 1;
+      &:nth-child(#{$key}) {
+        $row: floor($i / 20);
+        color: rgba(249 - $key*0.03, 203 - $key*0.43, 172 - $key*0.48, 1);
+        mix-blend-mode: difference;
+        clip-path: polygon(
+          floor($i / 2) * 10% - $row * 100% $row * 50%,
+          floor($key / 2) * 10% - $row * 100% ceil($key % 2) * 50% + ($row * 50%),
+          ceil($key / 2) * 10% - $row * 100% ($row + 1) * 50%
+        );
+        transform-origin: random(100) - 50 + floor($i / 2) * 10% - $row * 100%  random(100) - 50 + $row * 50%;
+        animation: fly#{$key} 4000ms $i * 40ms cubic-bezier(0.360, 0.100, 0.160, 1.000) alternate;
+        animation-fill-mode: forwards;
+
+        @keyframes fly#{$key} {
+          $initX: random(1000) - 500;
+          $initY: random(1000) - 500;
+          $initZ: random(1000) - 500;
+          $initDepth: random(3000) - 2500;
+          0% {
+            opacity: 0;
+            transform: translate(-50%, -50%) rotateX(#{$initX}deg) rotateY(#{$initY}deg) rotateZ(#{$initZ}deg) translateZ(#{$initDepth}px);
+          }
+          10% {
+            opacity: 0;
+            transform: translate(-50%, -50%) rotateX(#{$initX}deg) rotateY(#{$initY}deg) rotateZ(#{$initZ}deg) translateZ(#{$initDepth}px);
+          }
+          90% {
+            opacity: 1;
+            transform: translate(-50%, -50%) rotate(0deg) rotateY(0deg) rotateZ(0deg) translateZ(0px);
+          }
+          100% {
+            opacity: 1;
+            transform: translate(-50%, -50%) rotate(0deg) rotateY(0deg) rotateZ(0deg) translateZ(0px);
+          }
+        }
+      }
+    }
+  }
 }
-li {
+
+.home__text {
+  height: 100vh;
+  width: 100%;
+  position: absolute;
+  top: 0%;
+  background-color: #000;
+  &--job {
+    height: 36px;
+    width: 324px;
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translateX(-50%);
+    color: white;
+    font-size: 3em;
+    font-size: 26px;
+    font-family: 'Lato-Light', Arial, Helvetica, sans-serif;
+    font-weight: 200;
+    letter-spacing: 3px;
+    width: fit-content;
+    text-align: center;
+  }
+
+  &--location {
+    height: 36px;
+    width: 324px;
+    position: absolute;
+    top: 70%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translateX(-50%);
+    color: white;
+    font-size: 18px;
+    font-family: 'Lato-Light', Arial, Helvetica, sans-serif;
+    font-weight: 200;
+    letter-spacing: 2px;
+    width: fit-content;
+    text-align: center;
+  }
+}
+
+.home__description {
+  height: 80vh;
+  margin: auto;
+  padding-top: 46vh;
+  margin-bottom: 20vh;
+  color: #fff;
+  font-size: 3.6vw;
+  text-align: center;
+  &--text {width: 100%;}
+}
+
+.home__description-clipper {
   display: inline-block;
-  margin: 0 10px;
+  overflow: hidden;
+  white-space: nowrap;
 }
-a {
-  color: #42b983;
+// ============================================================= //
+
+// ===================== Home Background Animation ================== //
+.home__background {
+  height: 100vh;
+  // width: 100%;
+  position: absolute;
+  top: 0;
+  background-color: #fff;
 }
+// ============================================================= //
+
+// Prevent scroll.
+.no-scroll {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  overflow: hidden;
+}
+// ============================================================= //
+
+// ====================== Media queries ======================== //
+@media screen and (min-width: 750px) {
+  .home__description {
+    font-size: 25px;
+  }
+}
+
+@media screen and (max-width: 570px) {
+  .home__description {font-size: 19px;}
+}
+
+@media screen and (max-width: 450px) {
+  .home__text--job {font-size: 5vw;}
+  .home__description {font-size: 13px;}
+  .home__text--location {font-size: 16px;}
+}
+// ============================================================= //
 </style>
